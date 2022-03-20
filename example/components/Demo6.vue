@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import Markjs from "@wanglin1994/markjs";
+import Markjs from "markjs";
 import mousePlugin from "@wanglin1994/markjs/src/plugins/mouse";
 import imgPlugin from "@wanglin1994/markjs/src/plugins/img";
 import shapePlugin from "@wanglin1994/markjs/src/plugins/shape";

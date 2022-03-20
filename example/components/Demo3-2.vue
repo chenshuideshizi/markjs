@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import Markjs from "@wanglin1994/markjs";
+import Markjs from "markjs";
 import imgPlugin from "@wanglin1994/markjs/src/plugins/img";
 import shapePlugin from "@wanglin1994/markjs/src/plugins/shape";
 Markjs.use(imgPlugin, 0);

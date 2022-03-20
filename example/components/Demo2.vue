@@ -4,32 +4,32 @@
       <a href="#demo2">基础用法</a>
     </h1>
     <div class="markBox" ref="markBox1"></div>
-    <el-button
-      type="primary"
+    <button
+      type="button"
       @click="create1"
       :disabled="!editing1 || !!curEditMarkItem1"
-      >新增标注</el-button
+      >新增标注</button
     >
-    <el-button type="primary" @click="exit1" :disabled="!isCreateMarking1"
-      >退出新增</el-button
+    <button type="button" @click="exit1" :disabled="!isCreateMarking1"
+      >退出新增</button
     >
-    <el-button type="primary" @click="getMarkData1"
-      >获取标注（控制台查看）</el-button
+    <button type="button" @click="getMarkData1"
+      >获取标注（控制台查看）</button
     >
-    <el-button
-      type="primary"
+    <button
+      type="button"
       icon="el-icon-delete"
       @click="deleteItem1"
       :disabled="!curEditMarkItem1"
-    ></el-button>
-    <el-button type="primary" icon="el-icon-delete" @click="deleteAll1"
-      >删除全部</el-button
+    ></button>
+    <button type="button" icon="el-icon-delete" @click="deleteAll1"
+      >删除全部</button
     >
   </div>
 </template>
 
 <script>
-import Markjs from "@wanglin1994/markjs";
+import Markjs from "markjs";
 
 let mark1 = null;
 export default {

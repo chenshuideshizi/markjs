@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import Markjs from "@wanglin1994/markjs";
-import imgPlugin from "@wanglin1994/markjs/src/plugins/img";
+import Markjs from "markjs";
+import imgPlugin from "markjs/src/plugins/img";
 Markjs.use(imgPlugin, 0);
 
 let mark2 = null;

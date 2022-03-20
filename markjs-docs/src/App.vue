@@ -17,7 +17,7 @@ import Demo3 from "./components/Demo3";
 import Demo4 from "./components/Demo4";
 import Demo5 from "./components/Demo5";
 import Demo6 from "./components/Demo6";
-import Demo32 from './components/Demo3-2'
+import Demo32 from "./components/Demo3-2";
 
 export default {
   name: "App",
@@ -28,7 +28,7 @@ export default {
     Demo4,
     Demo5,
     Demo6,
-    Demo32
+    Demo32,
   },
 };
 </script>

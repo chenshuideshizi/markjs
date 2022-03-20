@@ -136,7 +136,7 @@ export default {
 <style lang="less" scoped>
 .container {
   width: 100%;
-  
+
   .markBox {
     width: 100%;
     height: 400px;
@@ -696,7 +696,7 @@ export default {
         showPen: true,
         single: false,
         noCrossing: true,
-        img: require('../assets/demo.png'),
+        img: require("../assets/demo.png"),
         elBg: "#000",
         bg: "#fff",
       });
@@ -772,295 +772,294 @@ export default {
 ## API
 
 ```js
-import Markjs from '@wanglin1994/markjs'
+import Markjs from "@wanglin1994/markjs";
 ```
 
 ### 1.类
 
 ### 属性
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| pluginList | 插件列表 | Array | —      | [] |
+| 参数       | 说明     | 类型  | 可选值 | 默认值 |
+| ---------- | -------- | ----- | ------ | ------ |
+| pluginList | 插件列表 | Array | —      | []     |
 
 ```js
-console.log(Markjs.pluginList)
+console.log(Markjs.pluginList);
 ```
 
 ### 方法
 
-| 方法名  | 说明                               | 参数 |
-| ----- | ---------------------------------- | ------ |
-| use | 注册插件 | plugin（插件函数）, index（可选，注册位置，默认是添加在数组末尾，可通过该索引来控制插入的位置） |
+| 方法名 | 说明     | 参数                                                                                            |
+| ------ | -------- | ----------------------------------------------------------------------------------------------- |
+| use    | 注册插件 | plugin（插件函数）, index（可选，注册位置，默认是添加在数组末尾，可通过该索引来控制插入的位置） |
 
 ```js
-import imgPlugin from '@wanglin1994/markjs/src/plugins/img'
-Markjs.use(imgPlugin, 0)
+import imgPlugin from "@wanglin1994/markjs/src/plugins/img";
+Markjs.use(imgPlugin, 0);
 ```
 
 ### 2.实例
 
 ```js
-let mark = new Markjs(opt)
+let mark = new Markjs(opt);
 ```
 
-#### 入参opt
+#### 入参 opt
 
 如果使用了某个插件，该插件的配置参数也是在这里进行传入。
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| el | 容器元素，dom元素或选择器字符串 | Object/String | —      |  |
-| dbClickTime | 因为要检测双击，所以单击是有延时的，这个属性用来控制检测双击间隔的时间，即如果在该时间内鼠标点击了两次则认为是双击事件，单位ms | Number | —      | 200 |
+| 参数        | 说明                                                                                                                            | 类型          | 可选值 | 默认值 |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------- | ------ | ------ |
+| el          | 容器元素，dom 元素或选择器字符串                                                                                                | Object/String | —      |        |
+| dbClickTime | 因为要检测双击，所以单击是有延时的，这个属性用来控制检测双击间隔的时间，即如果在该时间内鼠标点击了两次则认为是双击事件，单位 ms | Number        | —      | 200    |
 
-#### mark实例属性
+#### mark 实例属性
 
-| 名称  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| opt | 配置参数对象 | Object | —      |  |
-| el | 容器元素 | Object/String | —      |  |
-| elRectInfo | 容器元素的尺寸信息 | Object | —      |  |
-| canvasEle | 绘图元素 | DOM Object | —      |  |
-| canvasEleRectInfo | 绘图元素的尺寸信息 | Object | —      |  |
-| ctx | 绘图上下文 | Object | —      |  |
-| observer | 发布订阅对象 | Object | —      |  |
+| 名称              | 说明               | 类型          | 可选值 | 默认值 |
+| ----------------- | ------------------ | ------------- | ------ | ------ |
+| opt               | 配置参数对象       | Object        | —      |        |
+| el                | 容器元素           | Object/String | —      |        |
+| elRectInfo        | 容器元素的尺寸信息 | Object        | —      |        |
+| canvasEle         | 绘图元素           | DOM Object    | —      |        |
+| canvasEleRectInfo | 绘图元素的尺寸信息 | Object        | —      |        |
+| ctx               | 绘图上下文         | Object        | —      |        |
+| observer          | 发布订阅对象       | Object        | —      |        |
 
-#### mark实例事件
+#### mark 实例事件
 
-| 事件  | 说明                               | 回调函数参数 |
-| ----- | ---------------------------------- | ------ |
-| CLICK | 画布区域的鼠标单击事件 | e（事件对象） |
+| 事件         | 说明                   | 回调函数参数  |
+| ------------ | ---------------------- | ------------- |
+| CLICK        | 画布区域的鼠标单击事件 | e（事件对象） |
 | DOUBLE-CLICK | 画布区域的鼠标双击事件 | e（事件对象） |
-| MOUSEDOWN | 画布区域的鼠标按下事件 | e（事件对象） |
-| MOUSEMOVE | 画布区域的鼠标移动事件 | e（事件对象） |
-| MOUSEUP | 鼠标松开事件 | e（事件对象） |
-| MOUSEENTER | 鼠标移入画布区域内事件 | e（事件对象） |
-| MOUSELEAVE | 鼠标移出画布区域内事件 | e（事件对象） |
-| WINDOW-CLICK | window窗口的单击事件 | e（事件对象） |
-| DESTORY | 实例销毁事件 |  |
+| MOUSEDOWN    | 画布区域的鼠标按下事件 | e（事件对象） |
+| MOUSEMOVE    | 画布区域的鼠标移动事件 | e（事件对象） |
+| MOUSEUP      | 鼠标松开事件           | e（事件对象） |
+| MOUSEENTER   | 鼠标移入画布区域内事件 | e（事件对象） |
+| MOUSELEAVE   | 鼠标移出画布区域内事件 | e（事件对象） |
+| WINDOW-CLICK | window 窗口的单击事件  | e（事件对象） |
+| DESTORY      | 实例销毁事件           |               |
 
-#### mark实例方法
+#### mark 实例方法
 
-| 方法名  | 说明                               | 参数 |
-| ----- | ---------------------------------- | ------ |
-| on | 监听事件，返回参数为一个token，用来解除事件监听 | event（事件名称）, callback（回调函数） |
-| off | 解除监听事件 | token（监听事件时返回的token） |
-| destroy | 销毁实例 |  |
-| clearCanvas | 清除绘图画布 |  |
-| toCanvasPos | 鼠标坐标转为相对绘图画布的坐标  | e（事件对象或{clientX, clientY}） |
+| 方法名      | 说明                                             | 参数                                    |
+| ----------- | ------------------------------------------------ | --------------------------------------- |
+| on          | 监听事件，返回参数为一个 token，用来解除事件监听 | event（事件名称）, callback（回调函数） |
+| off         | 解除监听事件                                     | token（监听事件时返回的 token）         |
+| destroy     | 销毁实例                                         |                                         |
+| clearCanvas | 清除绘图画布                                     |                                         |
+| toCanvasPos | 鼠标坐标转为相对绘图画布的坐标                   | e（事件对象或{clientX, clientY}）       |
 
-### 3.编辑插件edit
+### 3.编辑插件 edit
 
 编辑插件为核心插件，自动进行注册。该插件的入参也是通过实例化`Markjs`时进行传入。
 
 #### 入参
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| value | 回显的标注区域数据，对象数组，对象的字段见表3-1 | Array | —      | [] |
-| lineType | 线段类型 | line（普通线段）、borderLine（带边框的线段）、custom（自定义绘图方法），带边框的线段实现方式为绘制叠加的上下两条线段，下面的那条宽度较宽，上面的宽度较窄，当颜色设置的不一样时则会出现线段的样式，上面较窄的线段的样式同样见表3-2 | —      | line |
-| customRenderLine | 自定义绘制线段的方法，当lineType为custom时需要提供，回调参数为当前标注对象的实例 |  | —      |  |
-| strokeStyle | 标注区域轮廓样式，对象格式，字段见表3-2 | Object | —      |  |
-| pointStyle | 标注区域顶点样式，对象格式，字段见表3-3 | Object | —      |  |
-| fillColor | 标注区域填充颜色 | String | —      | rgba(0, 136, 255, 0.5) |
-| showPoint | 是否绘制端点 | Boolean | —      | true |
-| pointType | 顶点形状 | String | square（正方形）、circle（圆形） | square |
-| pointWidth | 顶点的宽度，正方形为边长的一半、圆形为半径 | Number | —      | 3 |
-| customRenderPoint | 自定义绘制顶点的方法，入参（ctx, x, y, onlyPath, pointStyle），分别为：ctx（canvas绘图上下文）、x,y（中心点的位置）、onlyPath（为true代表用于检测点是否在该顶点路径内时调用，此时不应该实际绘制出来，只要绘制路径即可）、pointStyle（顶点样式） |  | —      |  |
-| max | 允许创建的标注区域数量限制，默认-1，不限制 | Number | —      | -1 |
-| hoverActive | 鼠标滑过对象时显示可激活状态 | Boolean | —      | false |
-| readonly | 是否只读，不允许编辑，可调用方法开启编辑状态 | Boolean | —      | false |
-| single | 是否激活编辑某个区域时隐藏其他所有区域，注意这两种在交互细节上会有一点区别 | Boolean | —      | false |
-| noCrossing | 是否禁止某个标注对象自身线段交叉，和其他标注对象还是可以交叉的 | Boolean | —      | false |
-| dbClickRemovePoint | 是否允许双击顶点删除该顶点 | Boolean | —      | false |
-| area | 区域编辑模式，即从始至终都会显示为一个闭合的图形 | Boolean | —      | false |
-| adsorbent | 是否开启吸附效果 | Boolean | —      | true |
-| adsorbentNum | 吸附的距离，即距离小于等于该值时会进行吸附，单位px | Number | —      | 5 |
-| adsorbentLine | 是否允许吸附到线段上 | Boolean | —      | true |
-| dbClickActive | 是否双击激活标注对象，默认为单击激活 | Boolean | —      | false |
-| singleClickComplete | 默认情况下，双击结束编辑，如果该值设为true，除了新增创建期间外的编辑下如果单击了其他区域也可以结束编辑，设为false，即只允许双击结束编辑 | Boolean | —      | true |
+| 参数                | 说明                                                                                                                                                                                                                                               | 类型                                                                                                                                                                                                                               | 可选值                           | 默认值                 |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- | ---------------------- |
+| value               | 回显的标注区域数据，对象数组，对象的字段见表 3-1                                                                                                                                                                                                   | Array                                                                                                                                                                                                                              | —                                | []                     |
+| lineType            | 线段类型                                                                                                                                                                                                                                           | line（普通线段）、borderLine（带边框的线段）、custom（自定义绘图方法），带边框的线段实现方式为绘制叠加的上下两条线段，下面的那条宽度较宽，上面的宽度较窄，当颜色设置的不一样时则会出现线段的样式，上面较窄的线段的样式同样见表 3-2 | —                                | line                   |
+| customRenderLine    | 自定义绘制线段的方法，当 lineType 为 custom 时需要提供，回调参数为当前标注对象的实例                                                                                                                                                               |                                                                                                                                                                                                                                    | —                                |                        |
+| strokeStyle         | 标注区域轮廓样式，对象格式，字段见表 3-2                                                                                                                                                                                                           | Object                                                                                                                                                                                                                             | —                                |                        |
+| pointStyle          | 标注区域顶点样式，对象格式，字段见表 3-3                                                                                                                                                                                                           | Object                                                                                                                                                                                                                             | —                                |                        |
+| fillColor           | 标注区域填充颜色                                                                                                                                                                                                                                   | String                                                                                                                                                                                                                             | —                                | rgba(0, 136, 255, 0.5) |
+| showPoint           | 是否绘制端点                                                                                                                                                                                                                                       | Boolean                                                                                                                                                                                                                            | —                                | true                   |
+| pointType           | 顶点形状                                                                                                                                                                                                                                           | String                                                                                                                                                                                                                             | square（正方形）、circle（圆形） | square                 |
+| pointWidth          | 顶点的宽度，正方形为边长的一半、圆形为半径                                                                                                                                                                                                         | Number                                                                                                                                                                                                                             | —                                | 3                      |
+| customRenderPoint   | 自定义绘制顶点的方法，入参（ctx, x, y, onlyPath, pointStyle），分别为：ctx（canvas 绘图上下文）、x,y（中心点的位置）、onlyPath（为 true 代表用于检测点是否在该顶点路径内时调用，此时不应该实际绘制出来，只要绘制路径即可）、pointStyle（顶点样式） |                                                                                                                                                                                                                                    | —                                |                        |
+| max                 | 允许创建的标注区域数量限制，默认-1，不限制                                                                                                                                                                                                         | Number                                                                                                                                                                                                                             | —                                | -1                     |
+| hoverActive         | 鼠标滑过对象时显示可激活状态                                                                                                                                                                                                                       | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| readonly            | 是否只读，不允许编辑，可调用方法开启编辑状态                                                                                                                                                                                                       | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| single              | 是否激活编辑某个区域时隐藏其他所有区域，注意这两种在交互细节上会有一点区别                                                                                                                                                                         | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| noCrossing          | 是否禁止某个标注对象自身线段交叉，和其他标注对象还是可以交叉的                                                                                                                                                                                     | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| dbClickRemovePoint  | 是否允许双击顶点删除该顶点                                                                                                                                                                                                                         | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| area                | 区域编辑模式，即从始至终都会显示为一个闭合的图形                                                                                                                                                                                                   | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| adsorbent           | 是否开启吸附效果                                                                                                                                                                                                                                   | Boolean                                                                                                                                                                                                                            | —                                | true                   |
+| adsorbentNum        | 吸附的距离，即距离小于等于该值时会进行吸附，单位 px                                                                                                                                                                                                | Number                                                                                                                                                                                                                             | —                                | 5                      |
+| adsorbentLine       | 是否允许吸附到线段上                                                                                                                                                                                                                               | Boolean                                                                                                                                                                                                                            | —                                | true                   |
+| dbClickActive       | 是否双击激活标注对象，默认为单击激活                                                                                                                                                                                                               | Boolean                                                                                                                                                                                                                            | —                                | false                  |
+| singleClickComplete | 默认情况下，双击结束编辑，如果该值设为 true，除了新增创建期间外的编辑下如果单击了其他区域也可以结束编辑，设为 false，即只允许双击结束编辑                                                                                                          | Boolean                                                                                                                                                                                                                            | —                                | true                   |
 
-#### 表3-1 标注区域对象格式
+#### 表 3-1 标注区域对象格式
 
-| 字段名  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| data | 附加数据，你需要存储的任何数据 | Any | —      | null |
-| pointArr | 区域顶点坐标数据，对象数组，对象格式为：{x,y}，为比例坐标，即x为相对于绘图区域宽的比例，y为相对于绘图区域高的比例 | Array | —      | [] |
-| strokeStyle | 标注区域轮廓样式，对象格式，字段见表3-2 | Object | —      |  |
-| pointStyle | 标注区域顶点样式，对象格式，字段见表3-3 | Object | —      |  |
-| fillColor | 标注区域填充颜色 | String | —      | rgba(0, 136, 255, 0.5) |
+| 字段名      | 说明                                                                                                                 | 类型   | 可选值 | 默认值                 |
+| ----------- | -------------------------------------------------------------------------------------------------------------------- | ------ | ------ | ---------------------- |
+| data        | 附加数据，你需要存储的任何数据                                                                                       | Any    | —      | null                   |
+| pointArr    | 区域顶点坐标数据，对象数组，对象格式为：{x,y}，为比例坐标，即 x 为相对于绘图区域宽的比例，y 为相对于绘图区域高的比例 | Array  | —      | []                     |
+| strokeStyle | 标注区域轮廓样式，对象格式，字段见表 3-2                                                                             | Object | —      |                        |
+| pointStyle  | 标注区域顶点样式，对象格式，字段见表 3-3                                                                             | Object | —      |                        |
+| fillColor   | 标注区域填充颜色                                                                                                     | String | —      | rgba(0, 136, 255, 0.5) |
 
-#### 表3-2 strokeStyle样式对象格式
+#### 表 3-2 strokeStyle 样式对象格式
 
-| 字段名  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| lineWidth | 线条宽度 | Number | —      | 3 |
-| strokeColor | 线条颜色 | String | —      | rgba(0, 136, 255, 1) |
-| lineJoin | 线条末端样式 | String | bevel（斜角）、round（圆角）、miter（尖角） | round |
-| frontLineWidth | 当lineType为borderLine时配置，线条宽度 | Number | —      | 3 |
-| frontStrokeColor | 当lineType为borderLine时配置，线条颜色 | String | —      | rgba(0, 136, 255, 1) |
-| frontLineJoin | 当lineType为borderLine时配置，线条末端样式 | String | bevel（斜角）、round（圆角）、miter（尖角） | round |
+| 字段名           | 说明                                           | 类型   | 可选值                                      | 默认值               |
+| ---------------- | ---------------------------------------------- | ------ | ------------------------------------------- | -------------------- |
+| lineWidth        | 线条宽度                                       | Number | —                                           | 3                    |
+| strokeColor      | 线条颜色                                       | String | —                                           | rgba(0, 136, 255, 1) |
+| lineJoin         | 线条末端样式                                   | String | bevel（斜角）、round（圆角）、miter（尖角） | round                |
+| frontLineWidth   | 当 lineType 为 borderLine 时配置，线条宽度     | Number | —                                           | 3                    |
+| frontStrokeColor | 当 lineType 为 borderLine 时配置，线条颜色     | String | —                                           | rgba(0, 136, 255, 1) |
+| frontLineJoin    | 当 lineType 为 borderLine 时配置，线条末端样式 | String | bevel（斜角）、round（圆角）、miter（尖角） | round                |
 
+#### 表 3-3 pointStyle 样式对象格式
 
-#### 表3-3 pointStyle样式对象格式
-
-| 字段名  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| lineWidth | 线条宽度 | Number | —      | 3 |
-| strokeColor | 线条颜色 | String | —      | rgba(0, 136, 255, 1) |
-| fillColor | 填充颜色 | String | —      | rgba(0, 136, 255, 0.5) |
+| 字段名      | 说明     | 类型   | 可选值 | 默认值                 |
+| ----------- | -------- | ------ | ------ | ---------------------- |
+| lineWidth   | 线条宽度 | Number | —      | 3                      |
+| strokeColor | 线条颜色 | String | —      | rgba(0, 136, 255, 1)   |
+| fillColor   | 填充颜色 | String | —      | rgba(0, 136, 255, 0.5) |
 
 #### 实例事件
 
-| 事件  | 说明                               | 回调函数参数 |
-| ----- | ---------------------------------- | ------ |
-| CURRENT-MARK-ITEM-CHANGE | 当前激活标注对象变化时触发 | item（当前激活的标注对象） |
-| HOVER-ITEM | 鼠标移到某个标注对象区域内时触发 | inPathItem（当前移入的标注对象）, curEditingMarkItem（当前激活的标注对象），allInItems（路径包含当前该点的所有标注对象）, e（事件对象），inPointIndex（移到了当前移入的标注对象的某个顶点的索引，如果不在顶点上为-1） |
-| COMPLETE-EDIT-ITEM | 双击完成绘制时触发 | curEditingMarkItem（当前激活的标注对象）, e（事件对象） |
-| IS-CREATE-MARKING-CHANGE | 当前是否在创建标注中的状态变化时触发，只在标注仍未闭合时的创建中触发，不包括闭合后的编辑 | state（状态） |
-| DELETE-MARKING-ITEM | 删除某个标注时触发 | item（删除的那个标注对象），index（删除的标注的索引） |
-| DELETE-ALL-MARKING-ITEM | 删除全部标注时触发 |  |
-| COMPLETE-CREATE-ITEM | 新标注创建完成时触发 | curEditingMarkItem（当前创建完成的标注对象）, e（事件对象） |
-| LINE-CROSS | 检测到线段交叉时触发 | curEditingMarkItem（当前激活的标注对象） |
-| NOT-ENOUGH-END-POINTS | 双击闭合路径时如果顶点数量不足3个时触发 | curEditingMarkItem（当前激活的标注对象） |
-| NOT-ENOUGH-POINTS-REMOVE | 双击删除顶点时如果顶点数量不足3个时触发 | curEditingMarkItem（当前激活的标注对象） |
-| COUNT-LIMIT | 创建新标注时如果数量超出限制时触发 | curEditingMarkItem（当前激活的标注对象） |
+| 事件                     | 说明                                                                                     | 回调函数参数                                                                                                                                                                                                          |
+| ------------------------ | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CURRENT-MARK-ITEM-CHANGE | 当前激活标注对象变化时触发                                                               | item（当前激活的标注对象）                                                                                                                                                                                            |
+| HOVER-ITEM               | 鼠标移到某个标注对象区域内时触发                                                         | inPathItem（当前移入的标注对象）, curEditingMarkItem（当前激活的标注对象），allInItems（路径包含当前该点的所有标注对象）, e（事件对象），inPointIndex（移到了当前移入的标注对象的某个顶点的索引，如果不在顶点上为-1） |
+| COMPLETE-EDIT-ITEM       | 双击完成绘制时触发                                                                       | curEditingMarkItem（当前激活的标注对象）, e（事件对象）                                                                                                                                                               |
+| IS-CREATE-MARKING-CHANGE | 当前是否在创建标注中的状态变化时触发，只在标注仍未闭合时的创建中触发，不包括闭合后的编辑 | state（状态）                                                                                                                                                                                                         |
+| DELETE-MARKING-ITEM      | 删除某个标注时触发                                                                       | item（删除的那个标注对象），index（删除的标注的索引）                                                                                                                                                                 |
+| DELETE-ALL-MARKING-ITEM  | 删除全部标注时触发                                                                       |                                                                                                                                                                                                                       |
+| COMPLETE-CREATE-ITEM     | 新标注创建完成时触发                                                                     | curEditingMarkItem（当前创建完成的标注对象）, e（事件对象）                                                                                                                                                           |
+| LINE-CROSS               | 检测到线段交叉时触发                                                                     | curEditingMarkItem（当前激活的标注对象）                                                                                                                                                                              |
+| NOT-ENOUGH-END-POINTS    | 双击闭合路径时如果顶点数量不足 3 个时触发                                                | curEditingMarkItem（当前激活的标注对象）                                                                                                                                                                              |
+| NOT-ENOUGH-POINTS-REMOVE | 双击删除顶点时如果顶点数量不足 3 个时触发                                                | curEditingMarkItem（当前激活的标注对象）                                                                                                                                                                              |
+| COUNT-LIMIT              | 创建新标注时如果数量超出限制时触发                                                       | curEditingMarkItem（当前激活的标注对象）                                                                                                                                                                              |
 
 #### 实例方法
 
-| 方法名  | 说明                               | 参数 |
-| ----- | ---------------------------------- | ------ |
-| getState | 获取当前一些状态的值，返回一个对象，见表3-5 |  |
-| getMarkData | 获取标注点位数据，返回一个对象，有两个字段，data（创建对象时你添加的附加数据）、pointArr（标注区域顶点坐标数组，为比例数据） |  |
-| enableEdit | 开启编辑模式 |  |
-| disableEdit | 开启只读模式，成功返回true，返回false代表当前有正在编辑中的对象，不能结束编辑 |  |
-| deleteMarkItem | 删除指定标注对象，删除成功返回true | item（要删除的标注对象） |
-| deleteAllMarkItem | 删除所有标注对象 |  |
-| reset | 清除所有标注区域的鼠标滑入状态、激活状态，清除当前的激活元素 |  |
-| createMarkItem | 创建新标注区域，即使当前状态为可编辑状态，也需要调用该方法后才能在画布上创建新区域，每次创建一个新标注区域时都需要调用一次该方法，成功返回true，返回false代表不能创建新标注 | opt（对象格式，包括表3-1的所有字段） |
-| exitCreate | 取消/退出创建，`createMarkItem`后可通过调用该方法来结束创建，`single`为true的情况下激活了某个区域后想要退出激活时可以调用`reset`方法 |  |
+| 方法名            | 说明                                                                                                                                                                           | 参数                                   |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| getState          | 获取当前一些状态的值，返回一个对象，见表 3-5                                                                                                                                   |                                        |
+| getMarkData       | 获取标注点位数据，返回一个对象，有两个字段，data（创建对象时你添加的附加数据）、pointArr（标注区域顶点坐标数组，为比例数据）                                                   |                                        |
+| enableEdit        | 开启编辑模式                                                                                                                                                                   |                                        |
+| disableEdit       | 开启只读模式，成功返回 true，返回 false 代表当前有正在编辑中的对象，不能结束编辑                                                                                               |                                        |
+| deleteMarkItem    | 删除指定标注对象，删除成功返回 true                                                                                                                                            | item（要删除的标注对象）               |
+| deleteAllMarkItem | 删除所有标注对象                                                                                                                                                               |                                        |
+| reset             | 清除所有标注区域的鼠标滑入状态、激活状态，清除当前的激活元素                                                                                                                   |                                        |
+| createMarkItem    | 创建新标注区域，即使当前状态为可编辑状态，也需要调用该方法后才能在画布上创建新区域，每次创建一个新标注区域时都需要调用一次该方法，成功返回 true，返回 false 代表不能创建新标注 | opt（对象格式，包括表 3-1 的所有字段） |
+| exitCreate        | 取消/退出创建，`createMarkItem`后可通过调用该方法来结束创建，`single`为 true 的情况下激活了某个区域后想要退出激活时可以调用`reset`方法                                         |                                        |
 
-#### 表3-5 getState返回的状态对象格式
+#### 表 3-5 getState 返回的状态对象格式
 
-| 字段名  | 说明                               |
-| ----- | ---------------------------------- |
-| markItemList | 当前存在的标注对象列表 |
-| curEditingMarkItem | 当前激活的标注对象 |
-| isReadonly | 是否是只读状态 |
-| isCreateMarking | 是否正在创建新标注中，不包括闭合后的编辑 |
+| 字段名             | 说明                                     |
+| ------------------ | ---------------------------------------- |
+| markItemList       | 当前存在的标注对象列表                   |
+| curEditingMarkItem | 当前激活的标注对象                       |
+| isReadonly         | 是否是只读状态                           |
+| isCreateMarking    | 是否正在创建新标注中，不包括闭合后的编辑 |
 
-### 4.图片支持插件img
+### 4.图片支持插件 img
 
 当你需要标注图片时可以引入该插件，该插件会根据图片的实际宽高来进行等比例缩放绘图区域，并显示图片，如果最终绘图区域和容器宽高不一致会自动居中。
 
-图片支持插件需要手动引入注册，且要在编辑插件edit之前注册。
+图片支持插件需要手动引入注册，且要在编辑插件 edit 之前注册。
 
 ```js
-import Markjs from '@wanglin1994/markjs'
-import imgPlugin from '@wanglin1994/markjs/src/plugins/img'
-Markjs.use(imgPlugin, 0)
+import Markjs from "@wanglin1994/markjs";
+import imgPlugin from "@wanglin1994/markjs/src/plugins/img";
+Markjs.use(imgPlugin, 0);
 ```
 
 #### 入参
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| img | 图片地址，必填 | String | —      |  |
-| elBg | 容器的背景颜色 | String | —      |  |
-| bg | 画布的背景颜色 | String | —      |  |
+| 参数 | 说明           | 类型   | 可选值 | 默认值 |
+| ---- | -------------- | ------ | ------ | ------ |
+| img  | 图片地址，必填 | String | —      |        |
+| elBg | 容器的背景颜色 | String | —      |        |
+| bg   | 画布的背景颜色 | String | —      |        |
 
 #### 实例事件
 
-| 事件名  | 说明                               | 回调函数参数   |
-| ----- | ---------------------------------- | ------ |
+| 事件名       | 说明               | 回调函数参数  |
+| ------------ | ------------------ | ------------- |
 | imgLoadError | 图片加载失败时触发 | e（错误对象） |
 
 #### 实例属性
 
-| 属性名  | 说明                               |
-| ----- | ---------------------------------- |
-| image | 图片对象 |
-| ratio | 图片实际的宽高与容器宽高的比例 |
+| 属性名 | 说明                           |
+| ------ | ------------------------------ |
+| image  | 图片对象                       |
+| ratio  | 图片实际的宽高与容器宽高的比例 |
 
-### 5.鼠标样式支持插件mouse
+### 5.鼠标样式支持插件 mouse
 
 当需要鼠标在特定状态显示特定的样式时可以使用该插件，该插件需要手动引入注册。
 
 ```js
-import Markjs from '@wanglin1994/markjs'
-import mousePlugin from '@wanglin1994/markjs/src/plugins/mouse'
-Markjs.use(mousePlugin)
+import Markjs from "@wanglin1994/markjs";
+import mousePlugin from "@wanglin1994/markjs/src/plugins/mouse";
+Markjs.use(mousePlugin);
 ```
 
 #### 入参
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| cursorTips | 提示信息，对象，格式见表5-1 | Object | —      |  |
-| showPen | 否显示鼠标指针画笔 | Boolean | —      | true |
-| penImg | 自定义鼠标指针图片地址 | String | —      |  |
+| 参数       | 说明                         | 类型    | 可选值 | 默认值 |
+| ---------- | ---------------------------- | ------- | ------ | ------ |
+| cursorTips | 提示信息，对象，格式见表 5-1 | Object  | —      |        |
+| showPen    | 否显示鼠标指针画笔           | Boolean | —      | true   |
+| penImg     | 自定义鼠标指针图片地址       | String  | —      |        |
 
-#### 表5-1 提示信息cursorTips对象格式
+#### 表 5-1 提示信息 cursorTips 对象格式
 
-| 字段名  | 说明                               | 默认值 |
-| ----- | ---------------------------------- | ------ |
-| START | 正在创建一个新标注对象时未闭合时鼠标显示的文字 | 单击进行绘制，双击结束操作 |
-| EDITING | 移入当前激活对象区域内时鼠标显示的文字 | 拖曳移动节点或区域，双击结束操作 |
-| EDITING_POINT | 移入当前激活对象区域内的顶点时鼠标显示的文字，当dbClickRemovePoint设为true才有效 | 拖拽移动节点，修改区域边界，双击删除节点 |
-| HOVER | 当前没有激活对象时移入某个标注对象时鼠标显示的文字 | 单击激活该区域并进入编辑状态 |
+| 字段名        | 说明                                                                                 | 默认值                                   |
+| ------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| START         | 正在创建一个新标注对象时未闭合时鼠标显示的文字                                       | 单击进行绘制，双击结束操作               |
+| EDITING       | 移入当前激活对象区域内时鼠标显示的文字                                               | 拖曳移动节点或区域，双击结束操作         |
+| EDITING_POINT | 移入当前激活对象区域内的顶点时鼠标显示的文字，当 dbClickRemovePoint 设为 true 才有效 | 拖拽移动节点，修改区域边界，双击删除节点 |
+| HOVER         | 当前没有激活对象时移入某个标注对象时鼠标显示的文字                                   | 单击激活该区域并进入编辑状态             |
 
-### 6.特定形状插件shape
+### 6.特定形状插件 shape
 
 当你需要创建一个特定形状的标注对象时可以使用该插件，该插件需要手动引入注册。
 
 因为本人水平所限，只内置了正方形一种图形，你可以基于`shape`配置参数来创建你需要的特定图形。
 
 ```js
-import Markjs from '@wanglin1994/markjs'
-import shapePlugin from '@wanglin1994/markjs/src/plugins/shape'
-Markjs.use(shapePlugin)
+import Markjs from "@wanglin1994/markjs";
+import shapePlugin from "@wanglin1994/markjs/src/plugins/shape";
+Markjs.use(shapePlugin);
 ```
 
 #### 入参
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| shape | 形状扩展配置，可以通过该对象来扩展你自己需要的特定形状，目前只内置了正方形一种，对象格式，每个字段为一个特定形状，如：{square: shapeConfig, triangle: shapeConfig }，字段名为形状的名称，形状的配置对象shapeConfig字段见表6-1 | Object | —      |  |
+| 参数  | 说明                                                                                                                                                                                                                             | 类型   | 可选值 | 默认值 |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------ | ------ |
+| shape | 形状扩展配置，可以通过该对象来扩展你自己需要的特定形状，目前只内置了正方形一种，对象格式，每个字段为一个特定形状，如：{square: shapeConfig, triangle: shapeConfig }，字段名为形状的名称，形状的配置对象 shapeConfig 字段见表 6-1 | Object | —      |        |
 
-#### 表6-1 shapeConfig形状对象字段格式
+#### 表 6-1 shapeConfig 形状对象字段格式
 
-| 方法名  | 说明                               | 参数   |
-| ----- | ---------------------------------- | ------ |
-| create | 当调用`createShapeMarkItem`方法创建新的特定对象时会调用该方法来初始显示一个指定形状，需要返回一个`pointArr`数组，字段可见表3-1里的`pointArr`，所以简单来说，你需要返回一个形状的初始坐标数组 | canvasEleRectInfo（画布区域的尺寸信息） |
-| update | 当鼠标拖动某个端点时会调用该方法，你需要在该方法内更新当前标注对象的`pointArr`坐标数据来更新维护当前特定形状 | instance（当前标注对象）, x（当前鼠标指针相对于画布的x坐标）, y（当前鼠标指针相对于画布的y坐标） |
+| 方法名 | 说明                                                                                                                                                                                           | 参数                                                                                                 |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| create | 当调用`createShapeMarkItem`方法创建新的特定对象时会调用该方法来初始显示一个指定形状，需要返回一个`pointArr`数组，字段可见表 3-1 里的`pointArr`，所以简单来说，你需要返回一个形状的初始坐标数组 | canvasEleRectInfo（画布区域的尺寸信息）                                                              |
+| update | 当鼠标拖动某个端点时会调用该方法，你需要在该方法内更新当前标注对象的`pointArr`坐标数据来更新维护当前特定形状                                                                                   | instance（当前标注对象）, x（当前鼠标指针相对于画布的 x 坐标）, y（当前鼠标指针相对于画布的 y 坐标） |
 
-### 7.序号插件order
+### 7.序号插件 order
 
 序号插件会给某个标注区域显示一个编号。
 
 ![](../../.vuepress/public/Snipaste_2020-11-03_11-11-13.jpg)
 
 ```js
-import Markjs from '@wanglin1994/markjs'
-import orderPlugin from '@wanglin1994/markjs/src/plugins/order'
-Markjs.use(orderPlugin)
+import Markjs from "@wanglin1994/markjs";
+import orderPlugin from "@wanglin1994/markjs/src/plugins/order";
+Markjs.use(orderPlugin);
 ```
 
 #### 入参
 
-| 参数  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| order | 配置参数对象，字段见表7-1 | Object | —      |  |
+| 参数  | 说明                       | 类型   | 可选值 | 默认值 |
+| ----- | -------------------------- | ------ | ------ | ------ |
+| order | 配置参数对象，字段见表 7-1 | Object | —      |        |
 
-#### 表7-1 order对象字段格式
+#### 表 7-1 order 对象字段格式
 
-| 字段名  | 说明                               | 类型   | 可选值 | 默认值 |
-| ----- | ---------------------------------- | ------ | ------ | ------ |
-| color | 序号颜色 | String |  | #fff |
-| background | 序号背景颜色 | String |  | #2196F3 |
-| fontSize | 序号字号 | Number |  | 24 |
-| width | 序号的宽高 | Number |  | 48 |
-| class | 自定义css类名，设置了类名内部就只会设置基本的定位属性，其他样式属性需要你自己来设置 | String |  |  |
+| 字段名     | 说明                                                                                  | 类型   | 可选值 | 默认值  |
+| ---------- | ------------------------------------------------------------------------------------- | ------ | ------ | ------- |
+| color      | 序号颜色                                                                              | String |        | #fff    |
+| background | 序号背景颜色                                                                          | String |        | #2196F3 |
+| fontSize   | 序号字号                                                                              | Number |        | 24      |
+| width      | 序号的宽高                                                                            | Number |        | 48      |
+| class      | 自定义 css 类名，设置了类名内部就只会设置基本的定位属性，其他样式属性需要你自己来设置 | String |        |         |
 
 ### 8.插件开发
 

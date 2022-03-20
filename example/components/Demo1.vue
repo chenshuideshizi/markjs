@@ -5,33 +5,32 @@
     </h1>
     <div class="markBox" ref="markBox0"></div>
     <div class="btnGroup">
-      <el-button
-        type="primary"
+      <button
+        type="button"
         @click="create0"
         :disabled="!editing0 || !!curEditMarkItem0"
-        >新增标注</el-button
       >
-      <el-button type="primary" @click="exit0" :disabled="!isCreateMarking0"
-        >退出新增</el-button
-      >
-      <el-button type="primary" @click="getMarkData0"
-        >获取标注（控制台查看）</el-button
-      >
-      <el-button
-        type="primary"
+        新增标注
+      </button>
+      <button type="button" @click="exit0" :disabled="!isCreateMarking0">
+        退出新增
+      </button>
+      <button type="button" @click="getMarkData0">
+        获取标注（控制台查看）
+      </button>
+      <button
+        type="button"
         icon="el-icon-delete"
         @click="deleteItem1"
         :disabled="!curEditMarkItem0"
-      ></el-button>
-      <el-button type="primary" icon="el-icon-delete" @click="deleteAll0"
-        >删除全部</el-button
-      >
+      ></button>
+      <button type="button" @click="deleteAll0">删除全部</button>
     </div>
   </div>
 </template>
 
 <script>
-import Markjs from "@wanglin1994/markjs";
+import Markjs from "markjs";
 
 let mark0 = null;
 export default {
@@ -107,6 +106,9 @@ export default {
     exit0() {
       mark0.exitCreate();
     },
+    deleteItem1() {
+      
+    }
   },
 };
 </script>
