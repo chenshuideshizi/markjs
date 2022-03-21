@@ -1,7 +1,8 @@
-import Observer from "./src/observer";
+import Observer from "./shared/observer";
 import utils from "./src/utils";
 import editPlugin from "./src/plugins/edit";
 import merge from "deepmerge";
+
 
 /*
 配置
@@ -78,12 +79,13 @@ class Markjs {
     // 鼠标上次点击的时间
     this.lastClickTime = 0;
 
-    // 固化事件函数的this
-    this.bindEventCallback();
+    // 移除绑定事件
+    this.removeEventFns = []
+
     // 初始化
-    this.init();
+    this._init();
     // 注册插件
-    this.usePlugins();
+    this._usePlugins();
   }
 
 
@@ -92,7 +94,7 @@ class Markjs {
     this.emit("UPDATED_OPT", this.opt);
   }
 
-  usePlugins() {
+  _usePlugins() {
     let index = 0;
     let len = Markjs.pluginList.length;
     let loopUse = () => {
@@ -115,6 +117,12 @@ class Markjs {
   }
 
   on(event, callback) {
+    if (typeof event === 'object') {
+      Object.keys(event).forEach(eventKey => {
+        this.on(eventKey, event[eventKey])
+      })
+      return
+    }
     return this.observer.subscribe(event, callback);
   }
 
@@ -122,23 +130,23 @@ class Markjs {
     this.observer.unsubscribe(token);
   }
 
-  init() {
-    this.createElement();
+  _init() {
+    this._createCanvasElement();
     this.ctx = this.canvasEle.getContext("2d");
-    this.bindEvent();
+    this._bindEvent();
   }
 
-  
+
   destroy() {
-    this.unbindEvent();
+    this._unbindEvent();
     this.el.removeChild(this.canvasEle);
     this.emit("DESTORY");
     this.observer.clearAll();
   }
 
 
-  
-  createElement() {
+
+  _createCanvasElement() {
     this.elRectInfo = this.el.getBoundingClientRect();
     let { width, height } = this.elRectInfo;
     this.canvasEle = document.createElement("canvas");
@@ -152,143 +160,100 @@ class Markjs {
   }
 
 
-  
-  bindEventCallback() {
-    this.onclick = this.onclick.bind(this);
-    this.onmousedown = this.onmousedown.bind(this);
-    this.onmousemove = this.onmousemove.bind(this);
-    this.onmouseup = this.onmouseup.bind(this);
-    this.onmouseenter = this.onmouseenter.bind(this);
-    this.onmouseleave = this.onmouseleave.bind(this);
-    this.onWindowClick = this.onWindowClick.bind(this);
+  _addEvent(el, type, handler, capture = false) {
+    el.addEventListener(type, handler, capture)
+    const removeFn = () => {
+      el.removeEventListener(type, handler, capture)
+    }
+    this.removeEventFns.push(removeFn)
+    return removeFn
   }
 
-  
-  bindEvent() {
+  _bindEvent() {
     let isMobile = this.opt.mobile;
-    this.canvasEle.addEventListener("click", this.onclick);
-    this.canvasEle.addEventListener(
-      isMobile ? "touchstart" : "mousedown",
-      this.onmousedown
-    );
-    this.canvasEle.addEventListener(
-      isMobile ? "touchmove" : "mousemove",
-      this.onmousemove
-    );
-    window.addEventListener(isMobile ? "touchend" : "mouseup", this.onmouseup);
-    this.canvasEle.addEventListener("mouseenter", this.onmouseenter);
-    this.canvasEle.addEventListener("mouseleave", this.onmouseleave);
-    window.addEventListener("click", this.onWindowClick);
-  }
+    this._addEvent(this.canvasEle, 'click', onclick.bind(this))
+    this._addEvent(this.canvasEle, isMobile ? "touchstart" : "mousedown", onmousedown.bind(this))
+    this._addEvent(this.canvasEle, isMobile ? "touchmove" : "mousemove", onmousemove.bind(this))
+    this._addEvent(this.canvasEle, 'mouseenter', onmouseenter.bind(this))
+    this._addEvent(this.canvasEle, 'mouseleave', onmouseleave.bind(this))
+    this._addEvent(window, isMobile ? "touchend" : "mouseup", onmouseup.bind(this))
+    this._addEvent(window, 'click', onWindowClick.bind(this));
 
 
-  
-  unbindEvent() {
-    let isMobile = this.opt.mobile;
-    this.canvasEle.removeEventListener("click", this.onclick);
-    this.canvasEle.removeEventListener(
-      isMobile ? "touchstart" : "mousedown",
-      this.onmousedown
-    );
-    this.canvasEle.removeEventListener(
-      isMobile ? "touchmove" : "mousemove",
-      this.onmousemove
-    );
-    window.removeEventListener(
-      isMobile ? "touchend" : "mouseup",
-      this.onmouseup
-    );
-    this.canvasEle.removeEventListener("mouseenter", this.onmouseenter);
-    this.canvasEle.removeEventListener("mouseleave", this.onmouseleave);
-    window.removeEventListener("click", this.onWindowClick);
-  }
-  
-  onclick(e) {
-    if (this.clickTimer) {
-      clearTimeout(this.clickTimer);
-      this.clickTimer = null;
-    }
-
-    this.clickTimer = setTimeout(() => {
-      this.emit("CLICK", e);
-    }, this.opt.dbClickTime);
-
-    if (Date.now() - this.lastClickTime <= this.opt.dbClickTime) {
-      clearTimeout(this.clickTimer);
-      this.clickTimer = null;
-      this.lastClickTime = 0;
-      this.emit("DOUBLE-CLICK", e);
-    }
-
-    this.lastClickTime = Date.now();
-  }
-
-
-  
-  onmousedown(e) {
-    if (this.opt.mobile) {
-      e = e.touches[0];
-    }
-    this.mousedownPos = {
-      x: e.clientX,
-      y: e.clientY,
-    };
-    this.emit("MOUSEDOWN", e);
-  }
-
-
-  
-  onmousemove(e) {
-    if (this.opt.mobile) {
-      e = e.touches[0];
-    }
-    this.emit("MOUSEMOVE", e);
-  }
-
-
-  
-  onmouseup(e) {
-    if (this.opt.mobile) {
-      e = e.touches[0];
-    }
-    if (!e) {
-      e = {
-        clientX: 0,
-        clientY: 0,
+    function onmouseup(e) {
+      if (this.opt.mobile) {
+        e = e.touches[0];
+      }
+      if (!e) {
+        e = {
+          clientX: 0,
+          clientY: 0,
+        };
+      }
+      this.mouseupPos = {
+        x: e.clientX,
+        y: e.clientY,
       };
+      this.emit("MOUSEUP", e);
     }
-    this.mouseupPos = {
-      x: e.clientX,
-      y: e.clientY,
-    };
-    this.emit("MOUSEUP", e);
+
+    function onmousedown(e) {
+      if (this.opt.mobile) {
+        e = e.touches[0];
+      }
+      this.mousedownPos = {
+        x: e.clientX,
+        y: e.clientY,
+      };
+      this.emit("MOUSEDOWN", e);
+    }
+
+    function onclick(e) {
+      if (this.clickTimer) {
+        clearTimeout(this.clickTimer);
+        this.clickTimer = null;
+      }
+
+      this.clickTimer = setTimeout(() => {
+        this.emit("CLICK", e);
+      }, this.opt.dbClickTime);
+
+      if (Date.now() - this.lastClickTime <= this.opt.dbClickTime) {
+        clearTimeout(this.clickTimer);
+        this.clickTimer = null;
+        this.lastClickTime = 0;
+        this.emit("DOUBLE-CLICK", e);
+      }
+
+      this.lastClickTime = Date.now();
+    }
+
+    function onmousemove(e) {
+      this.emit("MOUSEMOVE", e);
+    }
+
+    function onmouseenter(e) {
+      this.emit("MOUSEENTER", e);
+    }
+
+    function onmouseleave(e) {
+      this.emit("MOUSELEAVE", e);
+    }
+
+    function onWindowClick(e) {
+      this.emit("WINDOW-CLICK", e);
+    }
   }
 
-
-  
-  onmouseenter(e) {
-    this.emit("MOUSEENTER", e);
+  _unbindEvent() {
+    this.removeEventFns.forEach(fn => fn())
+    this.removeEventFns = []
   }
 
-
-  
-  onmouseleave(e) {
-    this.emit("MOUSELEAVE", e);
-  }
-
-
-  
-  onWindowClick(e) {
-    this.emit("WINDOW-CLICK", e);
-  }
-
-
-  
   clearCanvas() {
     this.ctx.clearRect(0, 0, this.canvasEle.width, this.canvasEle.height);
   }
 
-  
   toCanvasPos(e) {
     let cx = e.clientX;
     let cy = e.clientY;

@@ -1,10 +1,4 @@
 export default class Observer {
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:06:15
-   * @Desc: 构造函数
-   */
   constructor() {
     // 订阅的集合
     this.observerListeners = {};
@@ -12,12 +6,6 @@ export default class Observer {
     this.observerToken = 0;
   }
 
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:06:53
-   * @Desc: 发布话题
-   */
   publish(topic, ...arg) {
     if (!topic || !this.observerListeners[topic]) {
       return false;
@@ -32,12 +20,6 @@ export default class Observer {
     }
   }
 
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:07:19
-   * @Desc:  订阅某个话题
-   */
   subscribe(topic, fn) {
     let context =
       arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "";
@@ -54,12 +36,6 @@ export default class Observer {
     return this.observerToken;
   }
 
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:07:46
-   * @Desc:  解除订阅
-   */
   unsubscribe(token) {
     if (!token) {
       return false;
@@ -75,12 +51,7 @@ export default class Observer {
     }
   }
 
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:08:16
-   * @Desc: 删掉某一类话题及其订阅
-   */
+
   clearTopic(topic) {
     if (!topic) {
       return false;
@@ -94,12 +65,6 @@ export default class Observer {
     }
   }
 
-  /**
-   * javascript comment
-   * @Author: 王林25
-   * @Date: 2020-07-31 16:08:35
-   * @Desc: 删除所有话题及订阅
-   */
   clearAll() {
     this.observerListeners = {};
     this.observerToken = 0;

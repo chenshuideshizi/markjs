@@ -62,7 +62,7 @@ IS-CREATE-MARKING-CHANGE（当前是否在创建中状态变化）
 
 // 默认配置
 const defaultOpt = {
-  value: [], // 回显的标注区域数据，点集合及样式
+  value: [],
   max: -1,
   hoverActive: false,
   readonly: false,
@@ -72,19 +72,23 @@ const defaultOpt = {
   area: false,
   adsorbent: true, // 吸附
   adsorbentNum: 5,
-  adsorbentLine: true,
+  adsorbentLine: true, 
   dbClickActive: false, // 双击
   singleClickComplete: true, // 点击完成
   enableAddPoint: false, // 允许添加点
 };
 
+/**
+ * javascript comment
+ * @Author: 王林25
+ * @Date: 2020-10-15 10:25:23
+ * @Desc: 编辑插件
+ */
 export default function EditPlugin(instance, utils) {
   let _resolve = null;
   let promise = new Promise((resolve) => {
     _resolve = resolve;
   });
-
-  
   let opt = {
     ...defaultOpt,
     ...instance.opt,
@@ -136,308 +140,18 @@ export default function EditPlugin(instance, utils) {
   // 创建一个只用于渲染吸附时的顶点的标注对象
   let adsorbentMark = createNewMarkItem();
 
-  const options = {
-    on: {
-      // 监听配置更新事件
-      UPDATED_OPT: (o) => {
-        opt = {
-          ...defaultOpt,
-          ...instance.opt,
-        };
-        instance.clearCanvas();
-
-        markItemList.forEach((item) => {
-          item.updateOpt(opt);
-          item.render();
-        });
-      },
-      // 监听单击事件
-      CLICK: (e) => {
-        if (isReadonly) {
-          return;
-        }
-        if (!opt.mobile && lastIsDragging) {
-          lastIsDragging = false;
-          return;
-        }
-        let { x, y } = instance.toCanvasPos(e);
-        // 检查点击的位置是否存在标注对象
-        let inPathItem = null;
-        // 创建新对象
-        if (isCreateMarking) {
-          let _x = x;
-          let _y = y;
-          // 如果存在吸附数据则使用吸附数据
-          if (adsorbentedPos) {
-            _x = adsorbentedPos[0];
-            _y = adsorbentedPos[1];
-            adsorbentedPos = null;
-          }
-          // 当前存在尚未闭合的激活对象
-          if (curEditingMarkItem) {
-            // 检查线段是否交叉
-            if (opt.noCrossing) {
-              let cross = curEditingMarkItem.checkNextLineSegmentCross(_x, _y);
-              if (cross) {
-                instance.emit("LINE-CROSS", curEditingMarkItem);
-              } else {
-                curEditingMarkItem.pushPoint(_x, _y);
-              }
-            } else {
-              curEditingMarkItem.pushPoint(_x, _y);
-            }
-          } else {
-            // 当前没有这种标注中的对象
-            // 数量判断
-            if (opt.max === -1 || markItemList.length < opt.max) {
-              disableAllItemsEdit();
-              setMarkEditItem(createNewMarkItem());
-              curEditingMarkItem.enable();
-              curEditingMarkItem.pushPoint(_x, _y);
-              markItemList.push(curEditingMarkItem);
-            } else {
-              // 超出数量限制
-              instance.emit("COUNT-LIMIT", curEditingMarkItem);
-              setIsCreateMarking(false);
-            }
-          }
-        } else if ((inPathItem = checkInPathItem(x, y))) {
-          // 当前点击的位置存在标注对象
-          // !(opt.single && curEditingMarkItem) &&
-          if (
-            !opt.dbClickActive &&
-            !checkInPathAllItems(x, y).includes(curEditingMarkItem)
-          ) {
-            if (!opt.single || (opt.single && !curEditingMarkItem)) {
-              disableAllItemsEdit();
-              inPathItem.enable();
-              setMarkEditItem(inPathItem);
-            }
-          }
-        } else {
-          // 点击空白处清除当前所有状态
-          if (!opt.single && opt.singleClickComplete) {
-            reset();
-          }
-        }
-        render();
-      },
-      // 监听鼠标按下事件
-      MOUSEDOWN:  (e) => {
-       if (isReadonly) {
-         return;
-       }
-       let { x, y } = instance.toCanvasPos(e);
-       if (
-         !curEditingMarkItem ||
-         !curEditingMarkItem.isEditing ||
-         !curEditingMarkItem.isClosePath
-       ) {
-         return;
-       }
-       // 判断是否在端点内
-       let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
-       // 是否在路径内
-       let isInPath = curEditingMarkItem.checkInPath(x, y);
-       if (isInPath || inPointIndex !== -1) {
-         if (opt.noCrossing) {
-           cachePointArr = JSON.parse(JSON.stringify(curEditingMarkItem.pointArr));
-         }
-         dragStartPos.x = x;
-         dragStartPos.y = y;
-         dragStartPosCache.x = x;
-         dragStartPosCache.y = y;
-         curEditingMarkItem.enableDrag(inPointIndex);
-      }
-      },
-      // 监听双击事件
-      'DOUBLE-CLICK':  (e) => {
-       if (isReadonly) {
-         return;
-       }
-       let { x, y } = instance.toCanvasPos(e);
-       // 能否激活其他对象
-       let canActive = true;
-       // 检查当前双击的位置最上层的编辑对象
-       let inPathItem = checkInPathItem(x, y);
-       // 检查当前双击的对象是否和当前编辑中的对象是同一个
-       let isSame =
-         inPathItem && curEditingMarkItem
-           ? inPathItem === curEditingMarkItem
-           : false;
-       // 当前存在编辑中的对象
-       if (curEditingMarkItem) {
-         // 点击的是顶点
-         let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
-         if (opt.dbClickRemovePoint && inPointIndex !== -1) {
-           canActive = false;
-           if (curEditingMarkItem.getPointLength() > 3) {
-             curEditingMarkItem.removePoint(inPointIndex);
-             render();
-           } else {
-             instance.emit("NOT-ENOUGH-POINTS-REMOVE", curEditingMarkItem);
-           }
-         } else {
-           // 端点数量不足三个
-           if (curEditingMarkItem.getPointLength() < 3) {
-             canActive = false;
-             instance.emit("NOT-ENOUGH-END-POINTS", curEditingMarkItem);
-           } else if (
-             opt.noCrossing &&
-             curEditingMarkItem.checkEndLineSegmentCross()
-           ) {
-             // 线段存在交叉
-             canActive = false;
-             instance.emit("LINE-CROSS", curEditingMarkItem);
-           } else {
-             if (isCreateMarking) {
-               instance.emit("COMPLETE-CREATE-ITEM", curEditingMarkItem, e);
-             }
-             setIsCreateMarking(false);
-             curEditingMarkItem.closePath();
-             curEditingMarkItem.disable();
-             adsorbentedPos = null;
-             setMarkEditItem(null);
-             render();
-             instance.emit("COMPLETE-EDIT-ITEM", curEditingMarkItem, e);
-           }
-         }
-       }
-       // 双击激活标注对象
-       if (
-         opt.dbClickActive &&
-         !isCreateMarking &&
-         canActive &&
-         inPathItem &&
-         !isSame
-       ) {
-         disableAllItemsEdit();
-         inPathItem.enable();
-         setMarkEditItem(inPathItem);
-         render();
-       }
-     },
-   
-   
-     // 监听鼠标移动事件
-     MOUSEMOVE: (e) => {
-       if (isReadonly) {
-         return;
-       }
-       let { x, y } = instance.toCanvasPos(e);
-       // 拖动编辑
-       if (curEditingMarkItem && curEditingMarkItem.isDragging) {
-         if (curEditingMarkItem.dragPointIndex !== -1) {
-           // 拖动单个顶点
-           curEditingMarkItem.dragPoint(...checkAdsorbent(x, y), instance);
-         } else {
-           // 拖动整体图形
-           checkAdsorbentWhole();
-           // 控制吸附后的脱离
-           if (
-             adsorbentedWholePos[0] !== 0 &&
-             adsorbentedWholePos[1] !== 0 &&
-             adsorbentedWholePosCacheMousePos.x === 0 &&
-             adsorbentedWholePosCacheMousePos.y === 0
-           ) {
-             adsorbentedWholePosCacheMousePos.x = x;
-             adsorbentedWholePosCacheMousePos.y = y;
-           }
-           if (
-             adsorbentedWholePosCacheMousePos.x !== 0 &&
-             adsorbentedWholePosCacheMousePos.y !== 0
-           ) {
-             if (
-               utils.getTwoPointDistance(
-                 adsorbentedWholePosCacheMousePos.x,
-                 adsorbentedWholePosCacheMousePos.y,
-                 x,
-                 y
-               ) > opt.adsorbentNum
-             ) {
-               adsorbentedWholePos = [0, 0];
-               dragStartPos.x = dragStartPosCache.x;
-               dragStartPos.y = dragStartPosCache.y;
-               adsorbentedWholePosCacheMousePos.x = 0;
-               adsorbentedWholePosCacheMousePos.y = 0;
-             }
-           }
-           let ox = x - dragStartPos.x;
-           let oy = y - dragStartPos.y;
-           curEditingMarkItem.dragAll(ox, oy);
-         }
-         render();
-         let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
-         instance.emit(
-           "HOVER-ITEM",
-           curEditingMarkItem,
-           curEditingMarkItem,
-           checkInPathAllItems(x, y),
-           e,
-           inPointIndex
-         );
-       } else if (isCreateMarking) {
-         // 创建新标注中
-         let ox = x - dragStartPos.x;
-         let oy = y - dragStartPos.y;
-         let apos = checkAdsorbent(ox, oy);
-         // 始终闭合模式
-         if (opt.area && curEditingMarkItem) {
-           curEditingMarkItem.areaToPoint(...apos);
-         }
-         render();
-       } else if (!isCreateMarking) {
-         // 显示可选择状态
-         let inPathItem = checkInPathItem(x, y);
-         // 鼠标滑过显示可选择状态
-         if (
-           opt.hoverActive &&
-           (!curEditingMarkItem || curEditingMarkItem.isClosePath)
-         ) {
-           disableAllItemsHoverActive();
-           inPathItem && inPathItem.enableHoverActive();
-           render();
-         }
-         if (inPathItem && inPathItem.isClosePath) {
-           let inPointIndex = inPathItem.checkInPoints(x, y);
-           instance.emit(
-             "HOVER-ITEM",
-             inPathItem,
-             curEditingMarkItem,
-             checkInPathAllItems(x, y),
-             e,
-             inPointIndex
-           );
-         }
-       }
-     },
-      // 监听鼠标松开事件
-      MOUSEUP: (e) => {
-       if (isReadonly) {
-         return;
-       }
-       if (curEditingMarkItem && curEditingMarkItem.isDragging) {
-         lastIsDragging = true;
-         curEditingMarkItem.disableDrag();
-         dragStartPos.x = 0;
-         dragStartPos.y = 0;
-         dragStartPosCache.x = 0;
-         dragStartPosCache.y = 0;
-         if (opt.noCrossing && curEditingMarkItem.checkLineSegmentCross()) {
-           instance.emit("LINE-CROSS", curEditingMarkItem);
-           curEditingMarkItem.pointArr = cachePointArr;
-           cachePointArr = null;
-         }
-         render();
-       }
-     }
-    }
-  }
-
-
-
-
-
+  // 监听配置更新事件
+  instance.on("UPDATED_OPT", (o) => {
+    opt = {
+      ...defaultOpt,
+      ...instance.opt,
+    };
+    instance.clearCanvas();
+    markItemList.forEach((item) => {
+      item.updateOpt(opt);
+      item.render();
+    });
+  });
 
   /**
    * @Desc: 回显数据
@@ -811,6 +525,307 @@ export default function EditPlugin(instance, utils) {
     }
   }
 
+  /**
+   * @Desc: 监听单击事件
+   */
+  instance.on("CLICK", (e) => {
+    if (isReadonly) {
+      return;
+    }
+    if (!opt.mobile && lastIsDragging) {
+      lastIsDragging = false;
+      return;
+    }
+    let { x, y } = instance.toCanvasPos(e);
+    // 检查点击的位置是否存在标注对象
+    let inPathItem = null;
+    // 创建新对象
+    if (isCreateMarking) {
+      let _x = x;
+      let _y = y;
+      // 如果存在吸附数据则使用吸附数据
+      if (adsorbentedPos) {
+        _x = adsorbentedPos[0];
+        _y = adsorbentedPos[1];
+        adsorbentedPos = null;
+      }
+      // 当前存在尚未闭合的激活对象
+      if (curEditingMarkItem) {
+        // 检查线段是否交叉
+        if (opt.noCrossing) {
+          let cross = curEditingMarkItem.checkNextLineSegmentCross(_x, _y);
+          if (cross) {
+            instance.emit("LINE-CROSS", curEditingMarkItem);
+          } else {
+            curEditingMarkItem.pushPoint(_x, _y);
+          }
+        } else {
+          curEditingMarkItem.pushPoint(_x, _y);
+        }
+      } else {
+        // 当前没有这种标注中的对象
+        // 数量判断
+        if (opt.max === -1 || markItemList.length < opt.max) {
+          disableAllItemsEdit();
+          setMarkEditItem(createNewMarkItem());
+          curEditingMarkItem.enable();
+          curEditingMarkItem.pushPoint(_x, _y);
+          markItemList.push(curEditingMarkItem);
+        } else {
+          // 超出数量限制
+          instance.emit("COUNT-LIMIT", curEditingMarkItem);
+          setIsCreateMarking(false);
+        }
+      }
+    } else if ((inPathItem = checkInPathItem(x, y))) {
+      // 当前点击的位置存在标注对象
+      // !(opt.single && curEditingMarkItem) &&
+      if (
+        !opt.dbClickActive &&
+        !checkInPathAllItems(x, y).includes(curEditingMarkItem)
+      ) {
+        if (!opt.single || (opt.single && !curEditingMarkItem)) {
+          disableAllItemsEdit();
+          inPathItem.enable();
+          setMarkEditItem(inPathItem);
+        }
+      }
+    } else {
+      // 点击空白处清除当前所有状态
+      if (!opt.single && opt.singleClickComplete) {
+        reset();
+      }
+    }
+    render();
+  });
+
+  /**
+   * @Desc: 监听双击事件
+   */
+  instance.on("DOUBLE-CLICK", (e) => {
+    if (isReadonly) {
+      return;
+    }
+    let { x, y } = instance.toCanvasPos(e);
+    // 能否激活其他对象
+    let canActive = true;
+    // 检查当前双击的位置最上层的编辑对象
+    let inPathItem = checkInPathItem(x, y);
+    // 检查当前双击的对象是否和当前编辑中的对象是同一个
+    let isSame =
+      inPathItem && curEditingMarkItem
+        ? inPathItem === curEditingMarkItem
+        : false;
+    // 当前存在编辑中的对象
+    if (curEditingMarkItem) {
+      // 点击的是顶点
+      let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
+      if (opt.dbClickRemovePoint && inPointIndex !== -1) {
+        canActive = false;
+        if (curEditingMarkItem.getPointLength() > 3) {
+          curEditingMarkItem.removePoint(inPointIndex);
+          render();
+        } else {
+          instance.emit("NOT-ENOUGH-POINTS-REMOVE", curEditingMarkItem);
+        }
+      } else {
+        // 端点数量不足三个
+        if (curEditingMarkItem.getPointLength() < 3) {
+          canActive = false;
+          instance.emit("NOT-ENOUGH-END-POINTS", curEditingMarkItem);
+        } else if (
+          opt.noCrossing &&
+          curEditingMarkItem.checkEndLineSegmentCross()
+        ) {
+          // 线段存在交叉
+          canActive = false;
+          instance.emit("LINE-CROSS", curEditingMarkItem);
+        } else {
+          if (isCreateMarking) {
+            instance.emit("COMPLETE-CREATE-ITEM", curEditingMarkItem, e);
+          }
+          setIsCreateMarking(false);
+          curEditingMarkItem.closePath();
+          curEditingMarkItem.disable();
+          adsorbentedPos = null;
+          setMarkEditItem(null);
+          render();
+          instance.emit("COMPLETE-EDIT-ITEM", curEditingMarkItem, e);
+        }
+      }
+    }
+    // 双击激活标注对象
+    if (
+      opt.dbClickActive &&
+      !isCreateMarking &&
+      canActive &&
+      inPathItem &&
+      !isSame
+    ) {
+      disableAllItemsEdit();
+      inPathItem.enable();
+      setMarkEditItem(inPathItem);
+      render();
+    }
+  });
+
+  /**
+   * javascript comment
+   * @Author: 王林25
+   * @Date: 2020-10-15 15:43:14
+   * @Desc: 监听鼠标按下事件
+   */
+  instance.on("MOUSEDOWN", (e) => {
+    if (isReadonly) {
+      return;
+    }
+    let { x, y } = instance.toCanvasPos(e);
+    if (
+      !curEditingMarkItem ||
+      !curEditingMarkItem.isEditing ||
+      !curEditingMarkItem.isClosePath
+    ) {
+      return;
+    }
+    // 判断是否在端点内
+    let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
+    // 是否在路径内
+    let isInPath = curEditingMarkItem.checkInPath(x, y);
+    if (isInPath || inPointIndex !== -1) {
+      if (opt.noCrossing) {
+        cachePointArr = JSON.parse(JSON.stringify(curEditingMarkItem.pointArr));
+      }
+      dragStartPos.x = x;
+      dragStartPos.y = y;
+      dragStartPosCache.x = x;
+      dragStartPosCache.y = y;
+      curEditingMarkItem.enableDrag(inPointIndex);
+    }
+  });
+
+  /**
+   * javascript comment
+   * @Author: 王林25
+   * @Date: 2020-10-15 16:57:32
+   * @Desc: 监听鼠标移动事件
+   */
+  instance.on("MOUSEMOVE", (e) => {
+    if (isReadonly) {
+      return;
+    }
+    let { x, y } = instance.toCanvasPos(e);
+    // 拖动编辑
+    if (curEditingMarkItem && curEditingMarkItem.isDragging) {
+      if (curEditingMarkItem.dragPointIndex !== -1) {
+        // 拖动单个顶点
+        curEditingMarkItem.dragPoint(...checkAdsorbent(x, y), instance);
+      } else {
+        // 拖动整体图形
+        checkAdsorbentWhole();
+        // 控制吸附后的脱离
+        if (
+          adsorbentedWholePos[0] !== 0 &&
+          adsorbentedWholePos[1] !== 0 &&
+          adsorbentedWholePosCacheMousePos.x === 0 &&
+          adsorbentedWholePosCacheMousePos.y === 0
+        ) {
+          adsorbentedWholePosCacheMousePos.x = x;
+          adsorbentedWholePosCacheMousePos.y = y;
+        }
+        if (
+          adsorbentedWholePosCacheMousePos.x !== 0 &&
+          adsorbentedWholePosCacheMousePos.y !== 0
+        ) {
+          if (
+            utils.getTwoPointDistance(
+              adsorbentedWholePosCacheMousePos.x,
+              adsorbentedWholePosCacheMousePos.y,
+              x,
+              y
+            ) > opt.adsorbentNum
+          ) {
+            adsorbentedWholePos = [0, 0];
+            dragStartPos.x = dragStartPosCache.x;
+            dragStartPos.y = dragStartPosCache.y;
+            adsorbentedWholePosCacheMousePos.x = 0;
+            adsorbentedWholePosCacheMousePos.y = 0;
+          }
+        }
+        let ox = x - dragStartPos.x;
+        let oy = y - dragStartPos.y;
+        curEditingMarkItem.dragAll(ox, oy);
+      }
+      render();
+      let inPointIndex = curEditingMarkItem.checkInPoints(x, y);
+      instance.emit(
+        "HOVER-ITEM",
+        curEditingMarkItem,
+        curEditingMarkItem,
+        checkInPathAllItems(x, y),
+        e,
+        inPointIndex
+      );
+    } else if (isCreateMarking) {
+      // 创建新标注中
+      let ox = x - dragStartPos.x;
+      let oy = y - dragStartPos.y;
+      let apos = checkAdsorbent(ox, oy);
+      // 始终闭合模式
+      if (opt.area && curEditingMarkItem) {
+        curEditingMarkItem.areaToPoint(...apos);
+      }
+      render();
+    } else if (!isCreateMarking) {
+      // 显示可选择状态
+      let inPathItem = checkInPathItem(x, y);
+      // 鼠标滑过显示可选择状态
+      if (
+        opt.hoverActive &&
+        (!curEditingMarkItem || curEditingMarkItem.isClosePath)
+      ) {
+        disableAllItemsHoverActive();
+        inPathItem && inPathItem.enableHoverActive();
+        render();
+      }
+      if (inPathItem && inPathItem.isClosePath) {
+        let inPointIndex = inPathItem.checkInPoints(x, y);
+        instance.emit(
+          "HOVER-ITEM",
+          inPathItem,
+          curEditingMarkItem,
+          checkInPathAllItems(x, y),
+          e,
+          inPointIndex
+        );
+      }
+    }
+  });
+
+  /**
+   * javascript comment
+   * @Author: 王林25
+   * @Date: 2020-10-15 18:31:56
+   * @Desc: 监听鼠标松开事件
+   */
+  instance.on("MOUSEUP", (e) => {
+    if (isReadonly) {
+      return;
+    }
+    if (curEditingMarkItem && curEditingMarkItem.isDragging) {
+      lastIsDragging = true;
+      curEditingMarkItem.disableDrag();
+      dragStartPos.x = 0;
+      dragStartPos.y = 0;
+      dragStartPosCache.x = 0;
+      dragStartPosCache.y = 0;
+      if (opt.noCrossing && curEditingMarkItem.checkLineSegmentCross()) {
+        instance.emit("LINE-CROSS", curEditingMarkItem);
+        curEditingMarkItem.pointArr = cachePointArr;
+        cachePointArr = null;
+      }
+      render();
+    }
+  });
 
   /**
    * @Desc: 暴露方法给实例引用
